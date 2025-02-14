@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="5.0" client="site" method="upgrade">
+    <name>Easy VM custom fields Filter</name>
+    <author>Penumbra168</author>
+    <version>1.1.0</version>
+    <description>MOD_EASY_VM_FILTER</description>
+    <files>
+        <filename module="mod_EasyVMFilter">mod_EasyVMFilter.php</filename>
+        <filename>helper.php</filename>
+        <folder>tmpl</folder>
+        <folder>language</folder>
+		<folder>css</folder>
+    </files>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="custom_fields"
+                    type="sql"
+                    default=""
+                    label="MOD_EASY_VM_FILTER_CUSTOM_FIELDS_LABEL"
+                    description="MOD_EASY_VM_FILTER_CUSTOM_FIELDS_DESC"
+                    multiple="true"
+                    query="SELECT virtuemart_custom_id, custom_title FROM #__virtuemart_customs WHERE published = 1 AND is_list = 1 ORDER BY custom_title"
+                    key_field="virtuemart_custom_id"
+                    value_field="custom_title"
+                >
+                    <option value="">JOPTION_DO_NOT_USE</option>
+                </field>
+                <field
+                    name="display_type"
+                    type="list"
+                    default="select"
+                    label="MOD_EASY_VM_FILTER_DISPLAY_TYPE_LABEL"
+                    description="MOD_EASY_VM_FILTER_DISPLAY_TYPE_DESC"
+                >
+                    <option value="select">MOD_EASY_VM_FILTER_DISPLAY_TYPE_SELECT</option>
+                    <option value="radio">MOD_EASY_VM_FILTER_DISPLAY_TYPE_RADIO</option>
+                    <option value="checkbox">MOD_EASY_VM_FILTER_DISPLAY_TYPE_CHECKBOX</option>
+                </field>
+                <field
+					name="style_framework"
+					type="list"
+					default="bootstrap5"
+					label="MOD_EASY_VM_FILTER_STYLE_FRAMEWORK_LABEL"
+					description="MOD_EASY_VM_FILTER_STYLE_FRAMEWORK_DESC"
+				>
+					<option value="bootstrap5">MOD_EASY_VM_FILTER_STYLE_FRAMEWORK_BOOTSTRAP5</option>
+					<option value="joomla">MOD_EASY_VM_FILTER_STYLE_FRAMEWORK_JOOMLA</option>
+				</field>
+            </fieldset>
+        </fields>
+    </config>
+    <languages folder="language">
+       <language tag="en-GB">language/en-GB/en-GB.mod_EasyVMFilter.ini</language>
+       <language tag="ru-RU">language/ru-RU/ru-RU.mod_EasyVMFilter.ini</language>
+       <language tag="ua-UA">language/ua-UA/ua-UA.mod_EasyVMFilter.ini</language>	   
+    </languages>
+</extension>

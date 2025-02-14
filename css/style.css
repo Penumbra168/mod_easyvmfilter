@@ -1,0 +1,191 @@
+.filter-group {
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #ccc; 
+    padding-bottom: 10px; 
+}
+
+
+.filter-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.filter-title {
+    cursor: pointer;
+    padding: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    margin-bottom: 5px;
+    position: relative; 
+    padding-right: 25px; 
+}
+
+
+.accordion-icon {
+    position: absolute;
+    top: 40%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+  /*   background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"%3E%3Cpath d="M7 10l5 5 5-5z"/%3E%3C/svg%3E'); 
+    background-repeat: no-repeat;
+    background-position: center;*/
+}
+
+.filter-title.ui-accordion-header-active .accordion-icon {
+   /* background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"%3E%3Cpath d="M7 14l5-5 5 5z"/%3E%3C/svg%3E');  */
+}
+
+.accordion-icon::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f0fe";
+}
+
+.filter-title.ui-accordion-header-active .accordion-icon::before {
+    content: "\f146"; 
+}
+
+.filter-options-container {
+    max-height: 150px;
+    overflow: hidden;
+}
+
+.filter-options-container.expanded {
+    max-height: none;
+}
+
+.show-all-button {
+    cursor: pointer;
+    display: block;
+    margin-top: 5px;
+    border:none;
+    background:none;
+    padding:0;
+}
+
+
+
+
+
+
+.show-all-button:focus{
+    outline:none;
+}
+.easy-vm-margin{
+    margin-top: 10px;
+}
+
+.easy-vm-form-select-sm {
+  display: block;
+  width: 100%;
+  padding: 0.25rem 0.5rem; 
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #495057; 
+  background-color: #fff; 
+  background-clip: padding-box;
+  border: 1px solid #ced4da; 
+  border-radius: 0.2rem; 
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  -webkit-appearance: none; 
+  -moz-appearance: none; 
+  appearance: none; 
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 0.5rem center;
+  background-size: 16px 12px;
+  background-repeat: no-repeat;
+}
+
+.easy-vm-form-select-sm:focus {
+  border-color: #80bdff; 
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); 
+}
+
+.easy-vm-form-select-sm:disabled {
+  background-color: #e9ecef; 
+  opacity: 1; 
+}
+
+
+/* Стили для чекбоксов и радиокнопок (не Bootstrap 5) */
+.easy-vm-form-check {
+  position: relative;
+  display: block;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5em;
+}
+
+.easy-vm-form-check-input {
+  position: absolute;
+  margin-top: 0.3rem;
+  margin-left: -1.2em;
+  vertical-align: top;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance:none;
+  background-image: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  cursor: pointer;
+}
+
+.easy-vm-form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+}
+
+.easy-vm-form-check-input:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.easy-vm-form-check-input[type=radio] {
+    border-radius: 50%;
+}
+
+.easy-vm-form-check-label {
+  color: var(--body-color);
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+.btn .fas {
+    margin-right: 5px; 
+    font-size: 14px; 
+}
+.easy-vm-btn {
+    display: inline-block; 
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem; 
+    font-weight: 400; 
+    text-align: center; 
+    vertical-align: middle;
+    cursor: pointer; 
+    background-color: #f0f0f0; 
+    border: 1px solid #6c757d; 
+    border-radius: 0.25rem; 
+    color: #6c757d; 
+    width: 100%; 
+    margin-top: 1rem; 
+    transition: background-color 0.15s ease-in-out; 
+}
+
+.easy-vm-btn:hover {
+    background-color: #5a6268; 
+    border-color: #545b62; 
+    color:  #f0f0f0; 	
+}
