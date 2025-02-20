@@ -12,7 +12,7 @@ This Joomla module provides advanced product filtering for VirtueMart based on c
 *   **Adaptive Design:** The module automatically adapts to different Joomla templates.
 *   **Bootstrap 5 and Joomla Default Styles Support:** Allows selecting the styling framework in the module settings.
 *   **Clear All Button:** Easily clear all selected filters.
-*   **Collapsible Filter Groups:** Improved organization of filters on the page using jQuery UI Accordion.
+*   **Collapsible Filter Groups:** Improved organization of filters on the page using  Accordion.
 *   **Multilingual Support:** Full support for Joomla's multilingual capabilities.
 
 ## Requirements
