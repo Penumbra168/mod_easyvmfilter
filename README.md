@@ -1,4 +1,4 @@
-# Easy VM Filter for VirtueMart
+# Easy VM custom fields Filter for VirtueMart
 
 ## Description
 
