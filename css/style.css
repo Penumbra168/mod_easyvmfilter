@@ -1,9 +1,18 @@
-.filter-group {
-    margin-bottom: 10px;
-    border-bottom: 1px dashed #ccc; 
-    padding-bottom: 10px; 
+:root {
+  --body-color: #333;
+  --border-color: #ccc;
+  --border-width: 1px;
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --light-background: #f0f0f0;
+  --text-color: #495057;
 }
 
+.filter-group {
+    margin-bottom: 10px;
+    border-bottom: var(--border-width) dashed var(--border-color);
+    padding-bottom: 10px;
+}
 
 .filter-group:last-child {
     border-bottom: none;
@@ -11,88 +20,79 @@
     padding-bottom: 0;
 }
 
+.filter-content {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
+}
+
+
+.filter-content.open {
+    max-height: 1000px; 
+}
+
 .filter-title {
     cursor: pointer;
     padding: 5px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
+    background-color: var(--light-background);
+    border: var(--border-width) solid var(--border-color);
     margin-bottom: 5px;
-    position: relative; 
-    padding-right: 25px; 
+    position: relative;
+    padding-right: 25px;
 }
-
 
 .accordion-icon {
     position: absolute;
     top: 40%;
     right: 10px;
     transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
     width: 16px;
     height: 16px;
-  /*   background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"%3E%3Cpath d="M7 10l5 5 5-5z"/%3E%3C/svg%3E'); 
-    background-repeat: no-repeat;
-    background-position: center;*/
-}
-
-.filter-title.ui-accordion-header-active .accordion-icon {
-   /* background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"%3E%3Cpath d="M7 14l5-5 5 5z"/%3E%3C/svg%3E');  */
 }
 
 .accordion-icon::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    content: "\f0fe";
+    content: "\f0dd";
 }
 
-.filter-title.ui-accordion-header-active .accordion-icon::before {
-    content: "\f146"; 
-}
-
-.filter-options-container {
-    max-height: 150px;
-    overflow: hidden;
-}
-
-.filter-options-container.expanded {
-    max-height: none;
+.filter-title.active .accordion-icon::before {
+    content: "\f0de";
 }
 
 .show-all-button {
     cursor: pointer;
     display: block;
     margin-top: 5px;
-    border:none;
-    background:none;
-    padding:0;
+    border: none;
+    background: none;
+    padding: 0;
 }
 
-
-
-
-
-
-.show-all-button:focus{
-    outline:none;
+.show-all-button:focus {
+    outline: none;
 }
-.easy-vm-margin{
+
+.easy-vm-margin {
     margin-top: 10px;
 }
 
 .easy-vm-form-select-sm {
   display: block;
   width: 100%;
-  padding: 0.25rem 0.5rem; 
+  padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: #495057; 
-  background-color: #fff; 
+  color: var(--text-color);
+  background-color: #fff;
   background-clip: padding-box;
-  border: 1px solid #ced4da; 
-  border-radius: 0.2rem; 
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 0.2rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  -webkit-appearance: none; 
-  -moz-appearance: none; 
-  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
   background-position: right 0.5rem center;
   background-size: 16px 12px;
@@ -100,18 +100,16 @@
 }
 
 .easy-vm-form-select-sm:focus {
-  border-color: #80bdff; 
+  border-color: #80bdff;
   outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); 
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
 }
 
 .easy-vm-form-select-sm:disabled {
-  background-color: #e9ecef; 
-  opacity: 1; 
+  background-color: #e9ecef;
+  opacity: 1;
 }
 
-
-/* Стили для чекбоксов и радиокнопок (не Bootstrap 5) */
 .easy-vm-form-check {
   position: relative;
   display: block;
@@ -129,7 +127,7 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  -o-appearance:none;
+  -o-appearance: none;
   background-image: none;
   width: 1.125rem;
   height: 1.125rem;
@@ -137,8 +135,8 @@
 }
 
 .easy-vm-form-check-input:checked {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
 }
 
@@ -157,35 +155,76 @@
   cursor: pointer;
 }
 
+.range-slider {
+    margin-bottom: 15px;
+}
 
+.range-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+	margin-bottom: 5px
+}
 
+.range-inputs input[type="number"] {
+    width: 25%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 
+.range-values {
+    font-size: 0.8em;
+    color: #666;
+    text-align: center;
+}
 
-
+.easy-vm-ui-slider-horizontal {
+	margin-top: 5px;
+    height: 1em;
+}
 
 .btn .fas {
-    margin-right: 5px; 
-    font-size: 14px; 
+    margin-right: 5px;
+    font-size: 14px;
 }
+
 .easy-vm-btn {
-    display: inline-block; 
+    display: inline-block;
     padding: 0.375rem 0.75rem;
-    font-size: 1rem; 
-    font-weight: 400; 
-    text-align: center; 
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
     vertical-align: middle;
-    cursor: pointer; 
-    background-color: #f0f0f0; 
-    border: 1px solid #6c757d; 
-    border-radius: 0.25rem; 
-    color: #6c757d; 
-    width: 100%; 
-    margin-top: 1rem; 
-    transition: background-color 0.15s ease-in-out; 
+    cursor: pointer;
+    border: var(--border-width) solid var(--secondary-color);
+    border-radius: 0.25rem;
+    color: var(--secondary-color);
+    width: 100%;
+    margin-top: 1rem;
+    transition: background-color 0.15s ease-in-out;
+	background-color: var(--light-background);
 }
 
 .easy-vm-btn:hover {
-    background-color: #5a6268; 
-    border-color: #545b62; 
-    color:  #f0f0f0; 	
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--light-background);
 }
+
+/* Добавлено для стилизации иконки в кнопках в зависимости от темы */
+<?php
+/*
+$body_color = trim($this->params->get('body_color', '#333'));
+$icon_color = shopFunctionsF::VMgetThemeColor($body_color,0,0,50);
+
+?>
+
+.vm2-browse-orderby-container  ul  li a.active {
+	background-color: <?php echo $body_color ?>;
+}
+
+ul li a.active span,.vm2-browse-orderby-container  ul  li a.active:hover {
+    color: <?php echo $icon_color ?>;
+}
+*/
+?>

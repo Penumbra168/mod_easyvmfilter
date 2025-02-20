@@ -21,6 +21,8 @@
 
 defined ('_JEXEC') or die('Restricted access');
 $helperPath = JPATH_ROOT . '/modules/mod_EasyVMFilter/helper.php';
+// Загружаем языковой файл модуля вручную
+JFactory::getLanguage()->load('mod_easyvmfilter', JPATH_SITE . '/modules/mod_easyvmfilter');
 require_once $helperPath;
 
 
@@ -175,53 +177,131 @@ if(!empty($this->orderByList)) { ?>
 
 
 
-<?php
 
-// Получю список товаров из Virtuemart
-$products = $this->products;
-
-// Проверямс, что $products[1] существует и является массивом
-if (isset($products['products']) && is_array($products['products'])) {
-    $productArray = $products['products'];
-
-} else {
-
-    $productArray = array();
-}
+			<?php // ************************************************
+			// Get the current URL
+			$uri = JUri::getInstance();
+			$currentUrl = $uri->toString();
 
 
-$prd=0;
-$pro=0;
-// получаем выбранные фильтры
-$filters = isset($_GET['filter']) ? $_GET['filter'] : array();
+			// Получаемс список товаров из Virtuemart
+			$products = $this->products;
 
-// фильтруем товары
-if (!empty($filters)) {
-    $filtered_products = array();
-    foreach ($productArray as $product) {
-        $addProduct = true;
+			// Проверяем, что $products[1] существует и является массивом
+			if (isset($products['products']) && is_array($products['products'])) {
+				$productArray = $products['products'];
 
+			} else {
+
+				$productArray = array(); 
+			}
+
+
+			$prd=0;
+			$pro=0;
+			// Получаем выбранные фильтры
+			$filters = isset($_GET['filter']) ? $_GET['filter'] : array();
+
+
+			// Get min and max price from request
+			$minPrice = JFactory::getApplication()->input->get('min_price', 0, 'FLOAT');
+			$maxPrice = JFactory::getApplication()->input->get('max_price', 0, 'FLOAT');
+
+
+
+
+			// Фильтруемс товары
+			if (!empty($filters)) {
+				$filtered_products = array();
+				
+				foreach ($productArray as $product) {
+					$addProduct = true;
+
+				
+					//Filter by Price
+							// Получаем цену товара
+					$productPrice = isset($product->prices['product_price']) ? (float)$product->prices['product_price'] : 0;
+					if (($minPrice > 0 && $productPrice < $minPrice) || ($maxPrice > 0 && $productPrice > $maxPrice)) {
+						$addProduct = false;
+					}	
+				
+				
+				
+				
+					foreach ($filters as $custom_field_id => $filter_value) {
+				
+						$productId = isset($product->virtuemart_product_id) ? $product->virtuemart_product_id : (isset($product->product_id) ? $product->product_id : (isset($product->virtuemartProductId) ? $product->virtuemartProductId : (isset($product->id) ? $product->id : 0)));
+						$product_customfield_value = ModEasyVirtuemartFilterHelper::getProductCustomFieldValue($productId, $custom_field_id);
+
+						if (!empty($filter_value)) {
+							if (is_array($filter_value)) {
+								if (!in_array($product_customfield_value, $filter_value)) {
+									$addProduct = false;
+									break;
+								}
+							} else {
+								if ($product_customfield_value != $filter_value) {
+									$addProduct = false;
+									break;
+								}
+							}
+						}
+					}
+					if ($addProduct) {
+						$filtered_products[] = $product;
+					}
+				}
+				$productArray = $filtered_products;
+				unset($products['products']);
+				$products['products'] = $productArray;
+				$this->products = $products;
+
+			}
+
+// Display the applied filters
+if (!empty($filters)|| ($minPrice > 0 || $maxPrice > 0)): ?>
+    <div class="applied-filters">
+	
+	
+		 <?php  if ($minPrice > 0 || $maxPrice > 0):  ?>
+			<div class="applied-filter"><strong><?php echo  JText::_('MOD_EASY_VM_FILTER_FILTER_SELECT'); ?></strong><?php
+			echo  JText::_('MOD_EASY_VM_FILTER_PRICE_FROM') . ' ' . $minPrice . '  ' . JText::_('MOD_EASY_VM_FILTER_PRICE_TO') . '  ' . $maxPrice; ?></div>
+		<?php endif; ?>	
 		
-        foreach ($filters as $custom_field_id => $filter_value) {
-            $productId = isset($product->virtuemart_product_id) ? $product->virtuemart_product_id : (isset($product->product_id) ? $product->product_id : (isset($product->virtuemartProductId) ? $product->virtuemartProductId : (isset($product->id) ? $product->id : 0)));
-            $product_customfield_value = ModEasyVirtuemartFilterHelper::getProductCustomFieldValue($productId, $custom_field_id);
-           if (!empty($filter_value) && !in_array($product_customfield_value,$filter_value)) {
-                $addProduct = false;
-                break;
+	
+        <?php foreach ($filters as $custom_field_id => $filter_value): ?>
+            <?php
+            // Get the custom field title
+            $custom_field = ModEasyVirtuemartFilterHelper::getCustomFields(array($custom_field_id));
+            if (!empty($custom_field)) {
+                $custom_field_title = htmlspecialchars($custom_field[0]->custom_title);
+            } else {
+                $custom_field_title = 'Unknown Filter';
             }
-        }
-        if ($addProduct) {
-            $filtered_products[] = $product;
-        }
-    }
-    $productArray = $filtered_products;
-	unset($products['products']);
-	$products['products'] = $productArray;
-	$this->products = $products;
+            
+            if (is_array($filter_value)){
+              foreach ($filter_value as $single_filter_value):
+                // Create the remove filter URL
+                $removeFilterUrl =  ModEasyVirtuemartFilterHelper::removeURLParameter($uri,'filter[' . $custom_field_id . '][]=' . $single_filter_value);
 
-}
-?>
-
+                ?>
+				<button class="btn btn-outline-secondary" type="button" onclick="window.location.href='<?php echo $removeFilterUrl; ?>'" class="applied-filter">
+					<?php echo htmlspecialchars($single_filter_value); ?>
+					<span class="remove-filter"><i class="fas fa-times-circle"></i></span>
+				</button>
+              <?php endforeach;
+            } else {
+                // Create the remove filter URL
+                $removeFilterUrl =  ModEasyVirtuemartFilterHelper::removeURLParameter($uri,'filter[' . $custom_field_id . ']=' . $filter_value);
+                ?>
+				<button type="button" onclick="window.location.href='<?php echo $removeFilterUrl; ?>'" class="applied-filter">
+					<?php echo htmlspecialchars($filter_value); ?>
+					<span class="remove-filter"><i class="fas fa-times-circle"></i></span>
+				</button>
+            <?php } ?>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
 
 
 	<?php

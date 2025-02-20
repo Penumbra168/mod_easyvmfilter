@@ -2,7 +2,7 @@
 <extension type="module" version="5.0" client="site" method="upgrade">
     <name>Easy VM custom fields Filter</name>
     <author>Penumbra168</author>
-    <version>1.1.0</version>
+    <version>1.2.1</version>
     <description>MOD_EASY_VM_FILTER</description>
     <files>
         <filename module="mod_EasyVMFilter">mod_EasyVMFilter.php</filename>
@@ -48,6 +48,25 @@
 					<option value="bootstrap5">MOD_EASY_VM_FILTER_STYLE_FRAMEWORK_BOOTSTRAP5</option>
 					<option value="joomla">MOD_EASY_VM_FILTER_STYLE_FRAMEWORK_JOOMLA</option>
 				</field>
+				
+				<field
+					name="enable_price_filter"
+					type="radio"
+					default="0"
+					label="MOD_EASY_VM_FILTER_ENABLE_PRICE_FILTER_LABEL"
+					description="MOD_EASY_VM_FILTER_ENABLE_PRICE_FILTER_DESC"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+				<field
+					name="price_filter_label"
+					type="text"
+					default="Цена"
+					label="MOD_EASY_VM_FILTER_PRICE_FILTER_LABEL_LABEL"
+					description="MOD_EASY_VM_FILTER_PRICE_FILTER_LABEL_DESC"
+				/>				
+				
             </fieldset>
         </fields>
     </config>

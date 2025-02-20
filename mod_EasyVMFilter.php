@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     EasyVMFilter
- * @version     1.1.0
+ * @version     1.2.1
  * @date        2025-01-28
  * @author      Penumbra168 
  * @license     GNU General Public License v3; see LICENSE.txt
@@ -25,13 +25,30 @@ defined('_JEXEC') or die;
 
 require_once __DIR__ . '/helper.php';
 
+JFactory::getLanguage()->load('mod_easyvmfilter', JPATH_SITE, null, true);
 $custom_fields = $params->get('custom_fields', []);
 $display_type = $params->get('display_type', 'select'); 
-
 $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx'), ENT_COMPAT, 'UTF-8');
 
 $app = JFactory::getApplication();
 $template = $app->getTemplate();
+
+
+$enable_price_filter = $params->get('enable_price_filter', 0);
+$price_filter_label = $params->get('price_filter_label', 'Цена');
+
+$menu = $app->getMenu();
+$active = $menu->getActive();
+$categoryId = 0;
+if ($active && isset($active->query['virtuemart_category_id'])) {
+    $categoryId = (int)$active->query['virtuemart_category_id'];
+}
+
+$minMaxPrice = ModEasyVirtuemartFilterHelper::getMinMaxPrice($categoryId);
+$minPrice = floor($minMaxPrice->min_price);
+$maxPrice = ceil($minMaxPrice->max_price);
+
+
 
 
 $layout = $params->get('layout', '');

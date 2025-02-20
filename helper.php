@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     EasyVMFilter
- * @version     1.1.0
+ * @version     1.2.1
  * @date        2025-01-28
  * @author      Penumbra168 
  * @license     GNU General Public License v3; see LICENSE.txt
@@ -30,7 +30,7 @@ class ModEasyVirtuemartFilterHelper
         $db = JFactory::getDbo();
         $query = $db->getQuery(true);
 
-        $query->select($db->quoteName(['virtuemart_custom_id', 'custom_title', 'field_type'])) // Добавляем 'field_type'
+        $query->select($db->quoteName(['virtuemart_custom_id', 'custom_title', 'field_type'])) 
             ->from($db->quoteName('#__virtuemart_customs'))
             ->where($db->quoteName('virtuemart_custom_id') . ' IN (' . implode(',', array_map('intval', $custom_fields_ids)) . ')');
 
@@ -92,4 +92,50 @@ class ModEasyVirtuemartFilterHelper
 
         return $result;
     }
+	
+	  public static function removeURLParameter($url, $paramToRemove) {
+		$url_data = parse_url($url);
+		if (!isset($url_data["query"])) {
+			return $url; 
+		}
+
+		$queryString = urldecode($url_data['query']);    
+		$parts = explode("&", $queryString);
+		
+		
+		$filteredParts = array_filter($parts, function ($part) use ($paramToRemove) {
+			return $part !== $paramToRemove;
+		});
+
+
+		$queryString = implode("&", $filteredParts);
+		$new_url = $url_data['scheme'] . '://' . $url_data['host'] . $url_data['path'];
+		if (!empty($queryString)) {
+			$new_url .= '?' . ltrim($queryString, '&');
+		}
+
+		return $new_url;
+	}
+
+	  public static function getMinMaxPrice($virtuemart_category_id) {
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('MIN(prices.product_price) AS min_price, MAX(prices.product_price) AS max_price')
+			->from($db->quoteName('#__virtuemart_products', 'p'))
+			->innerJoin($db->quoteName('#__virtuemart_product_categories', 'pc'), $db->quoteName('p.virtuemart_product_id') . ' = ' . $db->quoteName('pc.virtuemart_product_id'))
+			->innerJoin($db->quoteName('#__virtuemart_product_prices', 'prices'), $db->quoteName('p.virtuemart_product_id') . ' = ' . $db->quoteName('prices.virtuemart_product_id'))
+			->where($db->quoteName('pc.virtuemart_category_id') . ' = ' . $db->quote($virtuemart_category_id));
+
+		$db->setQuery($query);
+
+		try {
+			$result = $db->loadObject();
+		} catch (RuntimeException $e) {
+			JLog::add($e->getMessage(), JLog::WARNING, 'jerror');
+			return (object)['min_price' => 0, 'max_price' => 0];
+		}
+
+		return $result;
+	}
 }

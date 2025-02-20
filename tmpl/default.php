@@ -1,7 +1,11 @@
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 <?php
 /**
  * @package     EasyVMFilter
- * @version     1.1.0
+ * @version     1.2.1
  * @date        2025-01-28
  * @author      Penumbra168 
  * @license     GNU General Public License v3; see LICENSE.txt
@@ -24,25 +28,117 @@
 
 defined('_JEXEC') or die;
 
+
+
+
 $custom_fields = ModEasyVirtuemartFilterHelper::getCustomFields($custom_fields);
 $display_type = $params->get('display_type', 'select');
 $style_framework = $params->get('style_framework', 'bootstrap5');
-// Add accordion 
+
 $document->addScriptDeclaration('
+	document.addEventListener("DOMContentLoaded", function() {
+	  var acc = document.querySelectorAll(".filter-group .filter-title");
+
+	  acc.forEach(function(title) {
+		title.addEventListener("click", function() {
+		  this.classList.toggle("active");
+		  var content = this.nextElementSibling;
+		  const isOpen = content.classList.contains("open");
+
+		  content.classList.toggle("open");
+
+		  if (content.style.maxHeight && content.style.maxHeight !== "0px") {
+			content.style.maxHeight = "0px";
+		  } else {
+			 content.style.maxHeight = null; 
+			 setTimeout(() => {
+			  content.style.maxHeight = content.scrollHeight + "px";
+			}, 0); 
+		  }
+		});
+	  });
+
+	  var initialOpen = document.querySelectorAll(".filter-content.open");
+	  for (var i = 0; i < initialOpen.length; i++) {
+		initialOpen[i].style.maxHeight = initialOpen[i].scrollHeight + "px";
+		initialOpen[i].previousElementSibling.classList.add("active");
+	  }
+	 });	 
+
+	 document.addEventListener("DOMContentLoaded", function () {
+	  var showAllButtons = document.querySelectorAll(".show-all-button");
+
+	  showAllButtons.forEach(function (button) {
+		var filterContent = button.closest(".filter-content");
+		if (!filterContent) return;
+
+		var accordion = filterContent.closest(".accordion"); 
+		var checkboxes = filterContent.querySelectorAll(`input[type="checkbox"]`);
+		var hiddenCheckboxes = Array.from(checkboxes).slice(5);
+
+		hiddenCheckboxes.forEach(checkbox => {
+		  var label = checkbox.closest("label") || checkbox.parentNode;
+		  if (label) label.style.display = "block";
+		});
+
+		var fullHeight = filterContent.scrollHeight;
+
+		hiddenCheckboxes.forEach(checkbox => {
+		  var label = checkbox.closest("label") || checkbox.parentNode;
+		  if (label) label.style.display = "none";
+		});
+
+		var collapsedHeight = filterContent.scrollHeight; 
+		filterContent.style.maxHeight = collapsedHeight + "px";
+		filterContent.style.overflow = "hidden";
+		filterContent.style.transition = "max-height 0.3s ease-out";
+
+		function updateAccordionHeight() {
+		  if (accordion) {
+			requestAnimationFrame(() => {
+			  accordion.style.height = "auto"; 
+			});
+		  }
+		}
+
+		button.addEventListener("click", function (e) {
+		  e.preventDefault();
+		  var isShowingAll = button.dataset.showingAll === "true";
+
+		  if (isShowingAll) {
+
+			hiddenCheckboxes.forEach(checkbox => {
+			  var label = checkbox.closest("label") || checkbox.parentNode;
+			  if (label) label.style.display = "none";
+			});
+
+			button.textContent = "'.JText::_('MOD_EASY_VM_FILTER_FILTER_SHOW_ALL').'";
+			button.dataset.showingAll = "false";
+			filterContent.style.maxHeight = collapsedHeight + "px";
+
+		  } else {
+		   
+			hiddenCheckboxes.forEach(checkbox => {
+			  var label = checkbox.closest("label") || checkbox.parentNode;
+			  if (label) label.style.display = "block";
+			});
+
+			button.textContent = "'.JText::_('MOD_EASY_VM_FILTER_FILTER_HIDE').'";
+			button.dataset.showingAll = "true";
+			filterContent.style.maxHeight = fullHeight + "px";
+		  }
+
+		  updateAccordionHeight(); 
+		});
+
+		button.dataset.showingAll = "false";
+	  });
+	});
+
+
     jQuery(document).ready(function($) {
 		var styleFramework = "'. $style_framework .'"; 
-        $(".filter-group").accordion({
-            collapsible: true,
-            active: 0,
-            heightStyle: "content"
-        });
 
-        $(".show-all-button").click(function() {
-            var container = $(this).prev(".filter-options-container");
-            container.toggleClass("expanded");
-            $(this).text(container.hasClass("expanded") ? "'.JText::_('MOD_EASY_VM_FILTER_FILTER_HIDE').'" : "'.JText::_('MOD_EASY_VM_FILTER_FILTER_SHOW_ALL').'");
-            container.children().slice(5).toggle();
-        });
 
         window.clearAllFilters = function() {
             var form = document.querySelector(".mod_easyvmfilter form");
@@ -52,7 +148,6 @@ $document->addScriptDeclaration('
             var url = form.action;
             var params = {};
 
-            // Очистка фильтров
             for (var i = 0; i < elements.length; i++) {
                 var el = elements[i];
                 if (el.name.startsWith("filter[")) {
@@ -64,7 +159,6 @@ $document->addScriptDeclaration('
                 }
             }
 
-            // Формирование URL с выбранными параметрами
             for (var i = 0; i < elements.length; i++) {
                 var el = elements[i];
                 if (el.name.startsWith("filter[") && el.value) {
@@ -91,7 +185,40 @@ $document->addScriptDeclaration('
             window.location.href = url;
         };
 
-        // Add icons to buttons (but not for Bootstrap 5)
+		console.log("jQuery UI Loaded:", $.ui); // Проверяем, загружен ли jQuery UI
+
+		var minPrice = '.$minPrice.';
+		var maxPrice = '.$maxPrice.';
+		var minLimit = Math.ceil(minPrice * 0.80);   
+		var maxLimit = Math.ceil(maxPrice * 1.10); 
+
+		console.log("Min Price:", minPrice, "Max Price:", maxPrice);
+
+		$("#price-slider").slider({
+			range: true,
+			min: minLimit,
+			max: maxLimit,
+			values: [minPrice, maxPrice],
+			slide: function(event, ui) {
+				console.log("New Values:", ui.values[0], ui.values[1]);
+				$("#min_price").val(ui.values[0]);
+				$("#max_price").val(ui.values[1]);
+			}
+		});
+
+		$("#min_price, #max_price").on("change", function() {
+			var minVal = parseInt($("#min_price").val(), 10) || minLimit;
+			var maxVal = parseInt($("#max_price").val(), 10) || maxLimit;
+
+			if (minVal < minLimit) minVal = minLimit;
+			if (maxVal > maxLimit) maxVal = maxLimit;
+			if (minVal > maxVal) minVal = maxVal;
+
+			console.log("Updated Input Values:", minVal, maxVal);
+			$("#price-slider").slider("values", [minVal, maxVal]);
+		});
+
+
 		console.log("styleFramework: " + styleFramework);
         if (styleFramework !== "bootstrap5") {
             $(".mod_easyvmfilter form button[type=\'submit\'], .mod_easyvmfilter form button[onclick=\'clearAllFilters()\']").each(function() {
@@ -118,19 +245,51 @@ $document->addScriptDeclaration('
 
 <div class="mod_easyvmfilter<?php echo $moduleclass_sfx; ?>">
     <form action="<?php echo JUri::current(); ?>" method="get">
+	
+	
+	
+	
+		<?php if ($enable_price_filter): ?>
+            <div class="filter-group">
+                <h6 class="filter-title"><?php echo htmlspecialchars($price_filter_label); ?>
+				 <span class="accordion-icon"></span>
+				</h6>
+                <div class="filter-content open">
+				<div class="easy-vm-ui-slider-horizontal">
+				<div id="price-slider"  class="easy-vm-ui-slider-horizontal"></div></div>
+                    <div class="range-inputs">
+						
+							<input type="number" name="min_price" placeholder="Min"  id="min_price" value="<?php echo isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : $minPrice; ?>">
+							<input type="number" name="max_price" placeholder="Max"  id="max_price" value="<?php echo isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : $maxPrice; ?>">
+						
+						<div class="range-values">
+							<?php echo JText::_('MOD_EASY_VM_FILTER_PRICE_FROM'); ?> <span id="min-price-label"><?php echo isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : $minPrice; ?></span><br>
+							<?php echo JText::_('MOD_EASY_VM_FILTER_PRICE_TO'); ?> <span id="max-price-label"><?php echo isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : $maxPrice; ?></span>
+						</div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>		
+	
+	
+	
+	
+	
         <?php foreach ($custom_fields as $field): ?>
 		
             <div class="filter-group">
+			
+
 			
                 <h6 class="filter-title">
 				        <?php echo htmlspecialchars($field->custom_title); ?>
 						<span class="accordion-icon"></span>
 				</h6>
 		
-                <div class="filter-content">
+                <div class="filter-content open">
  
 					 <?php if ($display_type == 'select'): ?>
-					 <?php echo ($style_framework == 'bootstrap5') ? '<div class="form-floating">' : ''; ?>
+					    <?php echo ($style_framework == 'bootstrap5') ? '<div class="form-floating">' : ''; ?>
 						<select class="<?php echo ($style_framework == 'bootstrap5') ? 'form-select' : 'easy-vm-form-select-sm'; ?>" name="filter[<?php echo $field->virtuemart_custom_id; ?>]" id="filter_<?php echo $field->virtuemart_custom_id; ?>">
 							<option value=""><?php echo JText::_('JALL'); ?></option>
 							<?php
@@ -141,7 +300,7 @@ $document->addScriptDeclaration('
 							  <?php endforeach; ?>
 						</select>
 						<?php echo ($style_framework == 'bootstrap5') ? '<label for="floatingSelect">' . JText::_('MOD_EASY_VM_FILTER_SELECT') . '</label></div>' : ''; ?>
-					<?php elseif ($display_type == 'radio'): ?>
+					 <?php elseif ($display_type == 'radio'): ?>
                             <?php
                               $filter_values = ModEasyVirtuemartFilterHelper::getFilterValues($field->virtuemart_custom_id);
                               $selectedValue = isset($_GET['filter'][$field->virtuemart_custom_id]) ? $_GET['filter'][$field->virtuemart_custom_id] : '';
@@ -151,7 +310,7 @@ $document->addScriptDeclaration('
                                     <label class="form-check-label" for="radio_<?php echo $field->virtuemart_custom_id; ?>_<?php echo htmlspecialchars($value); ?>"><?php echo htmlspecialchars($value); ?></label>
                                 </div>
                               <?php endforeach; ?>
-					<?php elseif ($display_type == 'checkbox'): ?>
+					 <?php elseif ($display_type == 'checkbox'): ?>
                             <?php
                               $filter_values = ModEasyVirtuemartFilterHelper::getFilterValues($field->virtuemart_custom_id);
                               $selectedValue = isset($_GET['filter'][$field->virtuemart_custom_id]) ? $_GET['filter'][$field->virtuemart_custom_id] : array();
